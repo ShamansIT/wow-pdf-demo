@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Demo Overlay</title>
+<title>WOW Demo Viewer</title>
 
 <style>
   html, body {
@@ -11,31 +11,31 @@
     height: 100%;
     overflow: hidden;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    background: #0b0f14; /* softer than hard gradient */
+    background: #0b0f14; /* neutral, soft */
   }
 
-  /* ✅ lighter dim + gentle blur */
+  /* Soft dim + light blur (no harsh gradient) */
   .overlay {
     position: fixed;
     inset: 0;
     display: grid;
     place-items: center;
-    background: rgba(0,0,0,0.35);        /* lighter dim */
-    backdrop-filter: blur(6px);          /* softer blur */
-    animation: fadeIn 0.45s ease-out forwards;
+    background: rgba(0, 0, 0, 0.28);  /* ✅ lighter dim */
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: fadeIn 0.38s ease-out forwards;
   }
 
   .content {
-    transform: scale(0.90) translateY(18px);
-    opacity: 0;
-    animation: zoomIn 0.65s cubic-bezier(.2,.9,.2,1) forwards;
     max-width: 92vw;
     max-height: 88vh;
-    box-shadow: 0 30px 90px rgba(0,0,0,0.55);
     border-radius: 16px;
     overflow: hidden;
     background: #0d1117;
-    position: relative;
+    box-shadow: 0 28px 90px rgba(0,0,0,0.55);
+    transform: scale(0.92) translateY(16px);
+    opacity: 0;
+    animation: zoomIn 0.62s cubic-bezier(.2,.9,.2,1) forwards;
   }
 
   .img-wrap {
@@ -50,8 +50,10 @@
     width: 100%;
     height: auto;
     transform: scale(1);
-    transition: transform 220ms ease;
+    transition: transform 200ms ease;
     transform-origin: center center;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   /* ✅ Zoom on hover */
@@ -59,12 +61,12 @@
     transform: scale(1.12);
   }
 
-  /* ✅ Close button ALWAYS visible */
+  /* ✅ Close always visible */
   .close {
     position: fixed;
     top: 18px;
     right: 18px;
-    z-index: 9999; /* important */
+    z-index: 9999;
     font-size: 16px;
     padding: 10px 14px;
     background: rgba(255,255,255,0.14);
@@ -75,94 +77,76 @@
     transition: 160ms ease;
     user-select: none;
   }
-  .close:hover { background: rgba(255,255,255,0.24); }
-
-  .hint {
-    position: fixed;
-    left: 18px;
-    bottom: 14px;
-    z-index: 9999;
-    font-size: 12px;
-    color: rgba(255,255,255,0.72);
-  }
-
-  /* shown if tab can't be closed */
-  .fallback {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9998;
-    display: grid;
-    place-items: center;
-    pointer-events: none;
-  }
-  .fallback .msg {
-    pointer-events: none;
-    font-size: 14px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    background: rgba(0,0,0,0.45);
-    color: rgba(255,255,255,0.85);
-    border: 1px solid rgba(255,255,255,0.15);
+  .close:hover {
+    background: rgba(255,255,255,0.24);
   }
 
   @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
   @keyframes zoomIn { to { transform: scale(1) translateY(0); opacity: 1; } }
-  @keyframes zoomOut { to { transform: scale(0.94) translateY(26px); opacity: 0; } }
+  @keyframes zoomOut { to { transform: scale(0.95) translateY(24px); opacity: 0; } }
 </style>
 </head>
 
 <body>
 
-<button class="close" onclick="closeDemo()">✕ Close</button>
-<div class="hint">Hover to zoom • ESC to close</div>
+<button class="close" id="closeBtn" type="button">✕ Close</button>
 
-<div class="overlay" id="overlay" onclick="onOverlayClick(event)">
+<div class="overlay" id="overlay">
   <div class="content" id="content">
     <div class="img-wrap">
-      <img id="demoImg" alt="Demo image"/>
+      <img id="demoImg" alt="Demo image" />
     </div>
   </div>
 </div>
 
-<div class="fallback" id="fallback">
-  <div class="msg">
-
 <script>
-  // Load image from URL: ?img=create-field.png
+  // Load image from query: ?img=multitab_pain.png
   const params = new URLSearchParams(window.location.search);
-  const imgParam = params.get('img') || 'create-field.png';
-  document.getElementById('demoImg').src = `assets/${imgParam}`;
+  const imgParam = params.get('img') || 'multitab_pain.png';
 
-  // ESC to close
+  // In your GitHub Pages repo, images should be in /assets/
+  const imgEl = document.getElementById('demoImg');
+  imgEl.src = `assets/${imgParam}`;
+
+  const overlay = document.getElementById('overlay');
+  const content = document.getElementById('content');
+  const closeBtn = document.getElementById('closeBtn');
+
+  // Close handlers
+  closeBtn.addEventListener('click', closeDemo);
+
+  // Click outside content closes
+  overlay.addEventListener('click', (e) => {
+    if (!content.contains(e.target)) closeDemo();
+  });
+
+  // ESC closes
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeDemo();
   });
 
-  // Click outside content to close
-  function onOverlayClick(e) {
-    const content = document.getElementById('content');
-    if (!content.contains(e.target)) closeDemo();
-  }
+  let closing = false;
 
   function closeDemo() {
-    const c = document.getElementById('content');
-    c.style.animation = 'zoomOut 0.35s ease-in forwards';
+    if (closing) return;
+    closing = true;
+
+    content.style.animation = 'zoomOut 0.30s ease-in forwards';
 
     setTimeout(() => {
-      // 1) Try close (may be blocked)
+      // Try close tab (works only in some contexts)
       window.close();
 
-      // 2) If not closed, try go back
+      // If not allowed, go back if possible
       setTimeout(() => {
         if (history.length > 1) {
           history.back();
         } else {
-          // 3) Last resort: show hint
-          document.getElementById('fallback').style.display = 'grid';
+          // Clean "exit" without any messages
+          location.replace('about:blank');
         }
       }, 120);
-    }, 260);
+    }, 220);
   }
 </script>
 
