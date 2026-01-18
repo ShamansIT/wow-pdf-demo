@@ -100,10 +100,13 @@
 </div>
 
 <script>
+  const imgEl = document.getElementById('demoImg');
+
   const params = new URLSearchParams(window.location.search);
   const imgParam = params.get('img');
   const defaultImg = 'default.png';
 
+  // default first
   imgEl.src = `assets/${defaultImg}`;
 
   if (imgParam) {
@@ -113,13 +116,17 @@
     test.src = `assets/${imgParam}`;
   }
 
+  const overlay = document.getElementById('overlay');
   const content = document.getElementById('content');
   const closeBtn = document.getElementById('closeBtn');
 
   // Close handlers
+  content.addEventListener('click', (e) => e.stopPropagation());
+  overlay.addEventListener('click', (e) => e.stopPropagation());
+
+  // Close handlers
   closeBtn.addEventListener('click', closeDemo);
 
-  // ESC closes
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeDemo();
   });
@@ -133,17 +140,10 @@
     content.style.animation = 'zoomOut 0.30s ease-in forwards';
 
     setTimeout(() => {
-      // Try close tab (works only in some contexts)
       window.close();
-
-      // If not allowed, go back if possible
       setTimeout(() => {
-        if (history.length > 1) {
-          history.back();
-        } else {
-          // Clean "exit" without any messages
-          location.replace('about:blank');
-        }
+        if (history.length > 1) history.back();
+        else location.replace('about:blank');
       }, 120);
     }, 220);
   }
