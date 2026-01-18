@@ -100,6 +100,9 @@
 </div>
 
 <script>
+  const overlay = document.getElementById('overlay');
+  const content = document.getElementById('content');
+  const closeBtn = document.getElementById('closeBtn');
   const imgEl = document.getElementById('demoImg');
 
   const params = new URLSearchParams(window.location.search);
@@ -117,15 +120,24 @@
     test.src = `assets/${imgParam}`;
   }
 
-  const overlay = document.getElementById('overlay');
-  const content = document.getElementById('content');
-  const closeBtn = document.getElementById('closeBtn');
+  // --- CLICK SHIELD: never close on left click anywhere (except Close button) ---
+  function isCloseButtonClick(e) {
+    return e.target && e.target.closest && e.target.closest('#closeBtn');
+  }
 
-  // (No overlay click handler!)
-  content.addEventListener('click', (e) => e.stopPropagation());
-  overlay.addEventListener('click', (e) => e.stopPropagation());
+  document.addEventListener('click', (e) => {
+    if (isCloseButtonClick(e)) return; // allow Close
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }, true);
 
-  // Close handlers
+  overlay.addEventListener('click', (e) => {
+    if (isCloseButtonClick(e)) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }, true);
+
+  // Close handlers (only button + ESC)
   closeBtn.addEventListener('click', closeDemo);
 
   window.addEventListener('keydown', (e) => {
@@ -149,6 +161,7 @@
     }, 220);
   }
 </script>
+
 
 </body>
 </html>
