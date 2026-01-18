@@ -11,16 +11,16 @@
     height: 100%;
     overflow: hidden;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    background: #0b0f14; /* neutral, soft */
+    background: #0b0f14; 
   }
 
-  /* Soft dim + light blur (no harsh gradient) */
+  /* Soft dim + light blur */
   .overlay {
     position: fixed;
     inset: 0;
     display: grid;
     place-items: center;
-    background: rgba(0, 0, 0, 0.28);  /* ✅ lighter dim */
+    background: rgba(0, 0, 0, 0.28);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     animation: fadeIn 0.38s ease-out forwards;
@@ -56,12 +56,12 @@
     -webkit-user-drag: none;
   }
 
-  /* ✅ Zoom on hover */
+  /* Zoom on hover */
   .img-wrap:hover img {
     transform: scale(1.12);
   }
 
-  /* ✅ Close always visible */
+  /* Close always visible */
   .close {
     position: fixed;
     top: 18px;
@@ -100,25 +100,24 @@
 </div>
 
 <script>
-  // Load image from query: ?img=multitab_pain.png
   const params = new URLSearchParams(window.location.search);
-  const imgParam = params.get('img') || 'multitab_pain.png';
+  const imgParam = params.get('img');
+  const defaultImg = 'default.png';
 
-  // In your GitHub Pages repo, images should be in /assets/
-  const imgEl = document.getElementById('demoImg');
-  imgEl.src = `assets/${imgParam}`;
+  imgEl.src = `assets/${defaultImg}`;
 
-  const overlay = document.getElementById('overlay');
+  if (imgParam) {
+    const test = new Image();
+    test.onload = () => { imgEl.src = `assets/${imgParam}`; };
+    test.onerror = () => { /* keep default */ };
+    test.src = `assets/${imgParam}`;
+  }
+
   const content = document.getElementById('content');
   const closeBtn = document.getElementById('closeBtn');
 
   // Close handlers
   closeBtn.addEventListener('click', closeDemo);
-
-  // Click outside content closes
-  overlay.addEventListener('click', (e) => {
-    if (!content.contains(e.target)) closeDemo();
-  });
 
   // ESC closes
   window.addEventListener('keydown', (e) => {
