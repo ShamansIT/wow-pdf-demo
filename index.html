@@ -120,7 +120,7 @@
     test.src = `assets/${imgParam}`;
   }
 
-  // --- CLICK SHIELD: never close on left click anywhere (except Close button) ---
+  // CLICK SHIELD: never close on left click anywhere (except Close button)
   function isCloseButtonClick(e) {
     return e.target && e.target.closest && e.target.closest('#closeBtn');
   }
