@@ -346,6 +346,19 @@
 </div>
 
 <script>
+  // --- Open as popup window (no address bar, no tabs) ---
+  if (window.name !== 'wow-popup') {
+    var w = screen.availWidth;
+    var h = screen.availHeight;
+    var popup = window.open(location.href, 'wow-popup',
+      'popup=yes,width=' + w + ',height=' + h + ',left=0,top=0');
+    if (popup) {
+      document.body.style.display = 'none';
+      window.close();
+      if (!window.closed) location.replace('about:blank');
+    }
+  }
+
   var overlay = document.getElementById('overlay');
   var content = document.getElementById('content');
   var closeBtn = document.getElementById('closeBtn');
