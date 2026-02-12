@@ -19,7 +19,7 @@ Designed for speakers and presenters who embed slide images into PDF/PowerPoint 
 - **Popup window** — opens without browser chrome for a clean presentation look
 - **Slide navigation** — arrow keys, on-screen buttons, mobile swipe
 - **Auto-discovery** — slides loaded from `slides.json` (no HTML editing needed)
-- **Draw tool** — annotate slides live during presentation (press `D`)
+- **Draw tools** — annotate slides live (pen, line, arrow, double arrow, block arrow, rectangle, ellipse)
 - **Wheel zoom** — scroll to zoom in/out, mouse position as focal point
 - **Responsive** — works on desktop, tablet, and mobile
 - **Fallback** — if popup is blocked, works as a regular page
@@ -57,6 +57,22 @@ Designed for speakers and presenters who embed slide images into PDF/PowerPoint 
 | `D` | Toggle draw mode |
 | `ESC` | Exit draw / reset zoom / close viewer |
 | `Double-click` | Reset zoom |
+
+## Draw Tools
+
+Press `D` to open the drawing toolbar. Available shape tools:
+
+| Tool | Description |
+|------|-------------|
+| Pen | Freehand drawing |
+| Line | Straight line |
+| Arrow | Line with arrowhead |
+| Double Arrow | Line with arrowheads on both ends |
+| Block Arrow | Large outlined arrow shape |
+| Rectangle | Rounded rectangle frame |
+| Ellipse | Oval / circle |
+
+Colors: red, yellow, green, blue, purple, white, black. Three brush sizes. Eraser and clear button included.
 
 ## Project Structure
 
