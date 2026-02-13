@@ -431,10 +431,20 @@
 
   function clampPercent(v) { return Math.max(0, Math.min(100, v)); }
 
+  function applyZoom() {
+    var t  = zoomLevel > 1.01 ? 'scale(' + zoomLevel + ')' : '';
+    var to = imgEl.style.transformOrigin;
+    imgEl.style.transform      = t;
+    drawCanvas.style.transform       = t;
+    drawCanvas.style.transformOrigin  = to;
+  }
+
   function resetZoom() {
     zoomLevel = 1;
     imgEl.style.transform = '';
     imgEl.style.transformOrigin = 'center center';
+    drawCanvas.style.transform       = '';
+    drawCanvas.style.transformOrigin  = 'center center';
     updateZoomBadge();
   }
 
@@ -460,16 +470,17 @@
 
     if (zoomLevel <= 1.01) { resetZoom(); return; }
     imgEl.style.transformOrigin = x + '% ' + y + '%';
-    imgEl.style.transform = 'scale(' + zoomLevel + ')';
+    applyZoom();
     updateZoomBadge();
   }, { passive: false });
 
   imgWrap.addEventListener('mousemove', function (e) {
     if (zoomLevel <= 1.01 || drawActive) return;
     var r = imgWrap.getBoundingClientRect();
-    imgEl.style.transformOrigin =
-      clampPercent(((e.clientX - r.left) / r.width) * 100) + '% ' +
-      clampPercent(((e.clientY - r.top) / r.height) * 100) + '%';
+    var o = clampPercent(((e.clientX - r.left) / r.width) * 100) + '% ' +
+            clampPercent(((e.clientY - r.top) / r.height) * 100) + '%';
+    imgEl.style.transformOrigin      = o;
+    drawCanvas.style.transformOrigin = o;
   });
 
   imgWrap.addEventListener('dblclick', function (e) {
